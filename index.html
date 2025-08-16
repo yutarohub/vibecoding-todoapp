@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO管理アプリ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>TODO管理</h1>
+        <div class="input-area">
+            <input type="text" id="new-task-input" placeholder="新しいタスク">
+            <button id="add-task-button">追加</button>
+        </div>
+
+        <div class="status-area">
+            <div class="status-column" id="todo-column">
+                <h2>TODO</h2>
+                <div class="task-list" id="todo-list" data-status="todo"></div>
+            </div>
+            <div class="status-column" id="doing-column">
+                <h2>Doing</h2>
+                <div class="task-list" id="doing-list" data-status="doing"></div>
+            </div>
+            <div class="status-column" id="done-column">
+                <h2>Done</h2>
+                <div class="task-list" id="done-list" data-status="done"></div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
