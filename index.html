@@ -3,39 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TODO管理アプリ</title>
+    <title>Notion風TODOアプリ</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
 </head>
 <body>
     <div class="container">
-        <h1>TODO管理</h1>
-        <div class="input-area">
-            <input type="text" id="new-task-name" placeholder="タスク名">
-            <input type="text" id="new-task-assignee" placeholder="担当者">
-            <select id="new-task-status">
+        <header>
+            <h1>Notion風TODO</h1>
+            <button id="add-task-btn">タスクを追加</button>
+        </header>
+
+        <main class="board">
+            <div class="column" data-status="todo">
+                <h2>TODO</h2>
+                <div class="task-list"></div>
+            </div>
+            <div class="column" data-status="inProgress">
+                <h2>In Progress</h2>
+                <div class="task-list"></div>
+            </div>
+            <div class="column" data-status="done">
+                <h2>Done</h2>
+                <div class="task-list"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- タスク追加/編集モーダル -->
+    <div id="task-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>タスクの追加</h2>
+            <input type="text" id="task-name" placeholder="タスク名">
+            <textarea id="task-description" placeholder="詳細"></textarea>
+            <input type="text" id="task-assignee" placeholder="担当者">
+            <select id="task-status">
                 <option value="todo">TODO</option>
-                <option value="doing">Doing</option>
+                <option value="inProgress">In Progress</option>
                 <option value="done">Done</option>
             </select>
-            <button id="add-task-button">追加</button>
-        </div>
-
-        <div class="task-area">
-            <div class="task-column" id="todo-column">
-                <h2>TODO</h2>
-                <div class="task-list" id="todo-list" data-status="todo"></div>
-            </div>
-            <div class="task-column" id="doing-column">
-                <h2>Doing</h2>
-                <div class="task-list" id="doing-list" data-status="doing"></div>
-            </div>
-            <div class="task-column" id="done-column">
-                <h2>Done</h2>
-                <div class="task-list" id="done-list" data-status="done"></div>
-            </div>
+            <button id="save-task-btn">保存</button>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
