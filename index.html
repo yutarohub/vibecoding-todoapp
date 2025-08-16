@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> e458e48 (resolve conflicts during rebase)
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -9,44 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TODO管理アプリ</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<<<<<<< HEAD
-=======
->>>>>>> 6452606 (first clean commit)
-=======
->>>>>>> e458e48 (resolve conflicts during rebase)
 <body>
     <div class="container">
         <h1>TODO管理</h1>
         <div class="input-area">
-<<<<<<< HEAD
-<<<<<<< HEAD
-            <input type="text" id="new-task-input" placeholder="新しいタスク">
-=======
             <input type="text" id="new-task-name" placeholder="タスク名">
-            <select id="new-task-progress">
+            <input type="text" id="new-task-assignee" placeholder="担当者">
+            <select id="new-task-status">
                 <option value="todo">TODO</option>
                 <option value="doing">Doing</option>
                 <option value="done">Done</option>
             </select>
-            <input type="text" id="new-task-assignee" placeholder="担当者">
->>>>>>> 6452606 (first clean commit)
-=======
-            <input type="text" id="new-task-input" placeholder="新しいタスク">
->>>>>>> e458e48 (resolve conflicts during rebase)
             <button id="add-task-button">追加</button>
         </div>
 
-        <div class="status-area">
-            <div class="status-column" id="todo-column">
+        <div class="task-area">
+            <div class="task-column" id="todo-column">
                 <h2>TODO</h2>
                 <div class="task-list" id="todo-list" data-status="todo"></div>
             </div>
-            <div class="status-column" id="doing-column">
+            <div class="task-column" id="doing-column">
                 <h2>Doing</h2>
                 <div class="task-list" id="doing-list" data-status="doing"></div>
             </div>
-            <div class="status-column" id="done-column">
+            <div class="task-column" id="done-column">
                 <h2>Done</h2>
                 <div class="task-list" id="done-list" data-status="done"></div>
             </div>
@@ -54,11 +38,4 @@
     </div>
     <script src="script.js"></script>
 </body>
-<<<<<<< HEAD
-<<<<<<< HEAD
 </html>
-=======
->>>>>>> 6452606 (first clean commit)
-=======
-</html>
->>>>>>> e458e48 (resolve conflicts during rebase)
