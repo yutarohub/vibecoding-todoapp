@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     const taskNameInput = document.getElementById('new-task-name');
-    const taskProgressSelect = document.getElementById('new-task-progress');
     const taskAssigneeInput = document.getElementById('new-task-assignee');
+    const taskStatusSelect = document.getElementById('new-task-status');
     const addTaskButton = document.getElementById('add-task-button');
+
     const todoList = document.getElementById('todo-list');
     const doingList = document.getElementById('doing-list');
     const doneList = document.getElementById('done-list');
@@ -17,18 +18,18 @@ document.addEventListener('DOMContentLoaded', function () {
         tasks.forEach(task => {
             const taskElement = document.createElement('div');
             taskElement.classList.add('task');
-            taskElement.draggable = true;
+            taskElement.setAttribute('draggable', true);
             taskElement.dataset.id = task.id;
 
             taskElement.addEventListener('dragstart', dragStart);
 
-            const taskName = document.createElement('p');
-            taskName.textContent = `タスク名: ${task.name}`;
-            taskElement.appendChild(taskName);
+            const taskNameElement = document.createElement('h3');
+            taskNameElement.textContent = task.name;
+            taskElement.appendChild(taskNameElement);
 
-            const taskAssignee = document.createElement('p');
-            taskAssignee.textContent = `担当者: ${task.assignee}`;
-            taskElement.appendChild(taskAssignee);
+            const taskAssigneeElement = document.createElement('p');
+            taskAssigneeElement.textContent = `担当者: ${task.assignee}`;
+            taskElement.appendChild(taskAssigneeElement);
 
             if (task.status === 'todo') {
                 todoList.appendChild(taskElement);
@@ -42,19 +43,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function addTask() {
         const taskName = taskNameInput.value.trim();
-        const taskProgress = taskProgressSelect.value;
         const taskAssignee = taskAssigneeInput.value.trim();
+        const taskStatus = taskStatusSelect.value;
 
         if (taskName !== '') {
             const task = {
                 id: Date.now(),
                 name: taskName,
-                status: taskProgress,
-                assignee: taskAssignee
+                assignee: taskAssignee,
+                status: taskStatus
             };
+
             tasks.push(task);
             localStorage.setItem('tasks', JSON.stringify(tasks));
             renderTasks();
+
             taskNameInput.value = '';
             taskAssigneeInput.value = '';
         }
@@ -72,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         const taskId = event.dataTransfer.getData('text/plain');
         const taskElement = document.querySelector(`[data-id="${taskId}"]`);
-        const newStatus = event.target.dataset.status;
+        const newStatus = event.target.closest('.task-list').dataset.status;
 
         if (taskElement && newStatus) {
             tasks = tasks.map(task => {
@@ -81,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 return task;
             });
+
             localStorage.setItem('tasks', JSON.stringify(tasks));
             renderTasks();
         }
@@ -88,14 +92,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     addTaskButton.addEventListener('click', addTask);
 
-    todoList.addEventListener('dragover', allowDrop);
-    todoList.addEventListener('drop', drop);
-
-    doingList.addEventListener('dragover', allowDrop);
-    doingList.addEventListener('drop', drop);
-
-    doneList.addEventListener('dragover', allowDrop);
-    doneList.addEventListener('drop', drop);
+    const taskLists = document.querySelectorAll('.task-list');
+    taskLists.forEach(taskList => {
+        taskList.addEventListener('dragover', allowDrop);
+        taskList.addEventListener('drop', drop);
+    });
 
     renderTasks();
 });
