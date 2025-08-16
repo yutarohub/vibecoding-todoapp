@@ -1,81 +1,131 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const taskNameInput = document.getElementById('new-task-name');
-    const taskAssigneeInput = document.getElementById('new-task-assignee');
-    const taskStatusSelect = document.getElementById('new-task-status');
-    const addTaskButton = document.getElementById('add-task-button');
+    const addTaskBtn = document.getElementById('add-task-btn');
+    const taskModal = document.getElementById('task-modal');
+    const closeModalSpan = document.querySelector('.close');
+    const saveTaskBtn = document.getElementById('save-task-btn');
 
-    const todoList = document.getElementById('todo-list');
-    const doingList = document.getElementById('doing-list');
-    const doneList = document.getElementById('done-list');
+    const taskIdInput = document.getElementById('task-id');
+    const taskNameInput = document.getElementById('task-name');
+    const taskDescriptionInput = document.getElementById('task-description');
+    const taskAssigneeInput = document.getElementById('task-assignee');
+    const taskStatusSelect = document.getElementById('task-status');
+
+    const taskLists = document.querySelectorAll('.task-list');
 
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
+    // タスクの描画
     function renderTasks() {
-        todoList.innerHTML = '';
-        doingList.innerHTML = '';
-        doneList.innerHTML = '';
+        taskLists.forEach(taskList => {
+            taskList.innerHTML = ''; // Clear existing tasks
+            const status = taskList.closest('.column').dataset.status;
+            const filteredTasks = tasks.filter(task => task.status === status);
 
-        tasks.forEach(task => {
-            const taskElement = document.createElement('div');
-            taskElement.classList.add('task');
-            taskElement.setAttribute('draggable', true);
-            taskElement.dataset.id = task.id;
+            filteredTasks.forEach(task => {
+                const taskElement = document.createElement('div');
+                taskElement.classList.add('task');
+                taskElement.draggable = true;
+                taskElement.dataset.id = task.id;
+                taskElement.innerHTML = `
+                    <h3>${task.name}</h3>
+                    <p>${task.description}</p>
+                    <p>担当者: ${task.assignee}</p>
+                `;
 
-            taskElement.addEventListener('dragstart', dragStart);
-
-            const taskNameElement = document.createElement('h3');
-            taskNameElement.textContent = task.name;
-            taskElement.appendChild(taskNameElement);
-
-            const taskAssigneeElement = document.createElement('p');
-            taskAssigneeElement.textContent = `担当者: ${task.assignee}`;
-            taskElement.appendChild(taskAssigneeElement);
-
-            if (task.status === 'todo') {
-                todoList.appendChild(taskElement);
-            } else if (task.status === 'doing') {
-                doingList.appendChild(taskElement);
-            } else {
-                doneList.appendChild(taskElement);
-            }
+                taskElement.addEventListener('dragstart', dragStart);
+                taskElement.addEventListener('click', () => openEditModal(task.id)); // タスククリックで編集
+                taskList.appendChild(taskElement);
+            });
         });
     }
 
-    function addTask() {
+    // タスク追加ボタンクリック
+    addTaskBtn.addEventListener('click', () => {
+        taskModal.style.display = 'flex';
+        document.querySelector('#task-modal h2').textContent = 'タスクの追加';
+        taskIdInput.value = ''; // Clear task ID for new task
+        taskNameInput.value = '';
+        taskDescriptionInput.value = '';
+        taskAssigneeInput.value = '';
+        taskStatusSelect.value = 'todo';
+    });
+
+    // モーダル閉じる
+    closeModalSpan.addEventListener('click', () => {
+        taskModal.style.display = 'none';
+    });
+
+    // タスク保存
+    saveTaskBtn.addEventListener('click', () => {
+        const taskId = taskIdInput.value;
         const taskName = taskNameInput.value.trim();
+        const taskDescription = taskDescriptionInput.value.trim();
         const taskAssignee = taskAssigneeInput.value.trim();
         const taskStatus = taskStatusSelect.value;
 
-        if (taskName !== '') {
-            const task = {
-                id: Date.now(),
-                name: taskName,
-                assignee: taskAssignee,
-                status: taskStatus
-            };
+        if (taskName) {
+            if (taskId) {
+                // Update existing task
+                tasks = tasks.map(task => {
+                    if (task.id == taskId) {
+                        task.name = taskName;
+                        task.description = taskDescription;
+                        task.assignee = taskAssignee;
+                        task.status = taskStatus;
+                    }
+                    return task;
+                });
+            } else {
+                // Create new task
+                const task = {
+                    id: Date.now(),
+                    name: taskName,
+                    description: taskDescription,
+                    assignee: taskAssignee,
+                    status: taskStatus
+                };
+                tasks.push(task);
+            }
 
-            tasks.push(task);
             localStorage.setItem('tasks', JSON.stringify(tasks));
             renderTasks();
+            taskModal.style.display = 'none'; // モーダルを閉じる
+        }
+    });
 
-            taskNameInput.value = '';
-            taskAssigneeInput.value = '';
+    // タスク編集のためにモーダルを開く
+    function openEditModal(taskId) {
+        const task = tasks.find(task => task.id == taskId);
+        if (task) {
+            taskModal.style.display = 'flex';
+            document.querySelector('#task-modal h2').textContent = 'タスクの編集';
+            taskIdInput.value = task.id;
+            taskNameInput.value = task.name;
+            taskDescriptionInput.value = task.description;
+            taskAssigneeInput.value = task.assignee;
+            taskStatusSelect.value = task.status;
         }
     }
 
+    // Drag & Drop
     function dragStart(event) {
         event.dataTransfer.setData('text/plain', event.target.dataset.id);
     }
 
-    function allowDrop(event) {
+    taskLists.forEach(taskList => {
+        taskList.addEventListener('dragover', dragOver);
+        taskList.addEventListener('drop', drop);
+    });
+
+    function dragOver(event) {
         event.preventDefault();
     }
 
     function drop(event) {
         event.preventDefault();
         const taskId = event.dataTransfer.getData('text/plain');
-        const taskElement = document.querySelector(`[data-id="${taskId}"]`);
-        const newStatus = event.target.closest('.task-list').dataset.status;
+        const taskElement = document.querySelector(`.task[data-id="${taskId}"]`);
+        const newStatus = event.target.closest('.column').dataset.status;
 
         if (taskElement && newStatus) {
             tasks = tasks.map(task => {
@@ -84,19 +134,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 return task;
             });
-
             localStorage.setItem('tasks', JSON.stringify(tasks));
             renderTasks();
         }
     }
 
-    addTaskButton.addEventListener('click', addTask);
-
-    const taskLists = document.querySelectorAll('.task-list');
-    taskLists.forEach(taskList => {
-        taskList.addEventListener('dragover', allowDrop);
-        taskList.addEventListener('drop', drop);
-    });
-
-    renderTasks();
+    renderTasks(); // 初期描画
 });
